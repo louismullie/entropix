@@ -30,7 +30,7 @@ curl -sSL https://install.python-poetry.org | python3 -
 
 install rust to build tiktoken
 ```bash
-curl --proto '=https' --tlsv1.3 https://sh.rustup.rs -sSf | sh
+curl --proto '=https' --tlsv1.2 https://sh.rustup.rs -sSf | sh
 ```
 
 poetry install

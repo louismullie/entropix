@@ -28,7 +28,7 @@ class XfmrWeights(NamedTuple):
 def load_weights(ckpt_dir: Path = Path('weights/1B-Instruct'), n_layers: int = 16):
   w = {}
   layer_weights = []
-  device = jax.devices("gpu")[0]
+  device = jax.devices("cpu")[0]
   for file in ckpt_dir.glob("*.npy"):
     name = '.'.join(str(file).split('/')[-1].split('.')[:-1])
     weight = jnp.load(file=file, mmap_mode='r', allow_pickle=True)
