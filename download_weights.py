@@ -82,7 +82,8 @@ def main(model_id: str, out_dir: Path):
       token = t_path.read_text().strip()
       #   BELOW LINES WILL DOWNLOAD THE TOKENIZER DOT MODEL, ONLY DO IT ONCE
       from huggingface_hub import hf_hub_download
-      hf_hub_download(repo_id="meta-llama/Meta-Llama-3-8B", filename="tokenizer.model", subfolder="original", local_dir=".")
+      hf_hub_download(repo_id="meta-llama/Meta-Llama-3-8B", filename="tokenizer.model", subfolder="original", local_dir=".", token=token)
+      exit()
       hf_model = AutoModelForCausalLM.from_pretrained(model_id,torch_dtype=torch.bfloat16, offload_folder="/tmp/offload", token=token)
       with torch.no_grad():
         state_dict = hf_model.state_dict()

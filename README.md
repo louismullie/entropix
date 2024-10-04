@@ -48,7 +48,7 @@ download tokenizer.model from huggingface (or wherever) into the entropix folder
 
 run it
 ```bash
- PYTHONPATH=. poetry run python entropix/main.py
+PYTHONPATH=. TIKTOKEN_CACHE_DIR=./cache poetry run python entropix/main.py
 ```   
 
 
