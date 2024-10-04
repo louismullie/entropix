@@ -158,7 +158,9 @@ def apply_scaling(freqs: torch.Tensor):
 def precompute_freqs_cis(
     dim: int, end: int, theta: float = 10000.0, use_scaled: bool = False
 ):
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     freqs = 1.0 / (theta ** (torch.arange(0, dim, 2)[: (dim // 2)].float() / dim))
+    freqs = freqs.to(device)
     t = torch.arange(end, device=freqs.device, dtype=torch.float32)
     if use_scaled:
         freqs = apply_scaling(freqs)
@@ -168,12 +170,13 @@ def precompute_freqs_cis(
 
 
 def build_attn_mask(seqlen: int, start_pos: int) -> torch.Tensor:
+  device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
   mask = None
   if seqlen > 1:
       mask = torch.full((seqlen, seqlen), float("-inf"))
       mask = torch.triu(mask, diagonal=1)
       mask = torch.hstack([torch.zeros((seqlen, start_pos)), mask]).to(torch.bfloat16)
-  return mask
+  return mask.to(device)
 
 
 LN_2 = 0.69314718056  # ln(2) = 1.0 / LOG2_E
@@ -237,6 +240,7 @@ def sample(gen_tokens: torch.Tensor, logits: torch.Tensor, temperature=0.666, to
 
 def main():
   with torch.inference_mode():
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model_params = LLAMA_1B_PARAMS
     xfmr_weights = load_weights()
     cxfmr = torch.compile(xfmr)
@@ -267,7 +271,7 @@ def main():
       gen_tokens = next_token
       print(tokenizer.decode([next_token.item()]), end='', flush=True)
       cur_pos = seqlen
-      stop = torch.tensor([128001, 128008, 128009])
+      stop = torch.tensor([128001, 128008, 128009]).to(device)
       #stop = torch.tensor(tokenizer.stop_tokens)
       while cur_pos < 2048:
         cur_pos += 1
